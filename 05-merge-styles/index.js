@@ -1,12 +1,12 @@
-const fs = require("fs");
-const path = require("path");
-const process = require("node:process");
-const { stdin } = process;
+const fs = require('fs');
+const path = require('path');
+// const process = require('node:process');
+// const { stdin } = process;
 
-const folderPath = "05-merge-styles/styles";
-const dir = "styles";
-const dirForResultFile = "project-dist";
-const resultFileName = "project-dist/bundle.css";
+const folderPath = '05-merge-styles/styles';
+const dir = 'styles';
+// const dirForResultFile = 'project-dist';
+const resultFileName = 'project-dist/bundle.css';
 let writableStream = fs.createWriteStream(
   path.resolve(__dirname, resultFileName)
 );
@@ -23,12 +23,12 @@ fs.readdir(folderPath, (err, files) => {
         } else {
           if (
             fileStats.isFile() &&
-            path.extname(file).split(".")[1] === "css"
+            path.extname(file).split('.')[1] === 'css'
           ) {
             let readableStream = fs.createReadStream(
               path.resolve(__dirname, dir, file)
             );
-            readableStream.on("data", (data) => {
+            readableStream.on('data', (data) => {
               writableStream.write(data);
             });
           }
