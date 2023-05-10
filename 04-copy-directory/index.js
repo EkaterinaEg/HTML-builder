@@ -1,5 +1,4 @@
-const { mkdir } = require('node:fs/promises');
-const fs = require('fs');
+const { mkdir, unlink, readdir, copyFile } = require('node:fs/promises');
 const { join } = require('node:path');
 const path = require('path');
 
@@ -14,21 +13,25 @@ async function makeDirectory() {
 makeDirectory().catch(console.error);
 
 const folderFromCopyPath = '04-copy-directory/files';
+const folderToCopyPath = '04-copy-directory/files-copy';
 const fromDir = 'files';
 const toDir = 'files-copy';
-fs.readdir(folderFromCopyPath, (err, files) => {
-  if (err) {
-    console.log(err);
-  } else {
-    files.forEach((file) => {
-      fs.copyFile(
-        path.resolve(__dirname, fromDir, file),
-        path.resolve(__dirname, toDir, file),
-        (err) => {
-          if (err) throw err;
-          console.log('succesfully');
-        }
-      );
-    });
+
+async function copyFiles() {
+  const files = await readdir(folderToCopyPath);
+  // console.log(`initial: ${files}`);
+  for (const file of files) {
+    await unlink(path.join(folderToCopyPath, file));
   }
-});
+
+  const items = await readdir(folderFromCopyPath);
+
+  items.forEach((item) => {
+    copyFile(
+      path.join(__dirname, fromDir, item),
+      path.join(__dirname, toDir, item)
+    );
+  });
+}
+
+copyFiles().catch(console.error);
